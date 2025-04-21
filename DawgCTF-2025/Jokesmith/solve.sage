@@ -1,6 +1,6 @@
 import os; os.environ['TERM'] = 'xterm-256color'
 
-from pwn import remote, context # not everything so there is no problem with load('...')
+from pwn import *
 from Crypto.Util.number import long_to_bytes, bytes_to_long
 
 context.log_level = 'info'
@@ -35,13 +35,11 @@ P.<x> = PolynomialRing(Zmod(N))
 k = len(FLAG) * 8
 f = (known_int * 2^k + x)^e - c
 
-load('https://raw.githubusercontent.com/defund/coppersmith/refs/heads/master/coppersmith.sage')
-
-roots = small_roots(f, (2^k,), m=5)
+roots = f.small_roots(epsilon=0.04)
 assert roots
 
-x = roots[0][0]
-print(long_to_bytes(int(x)).decode())
+x0 = roots[0]
+print(long_to_bytes(int(x0)).decode())
 
 io.close()
 
